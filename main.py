@@ -61,6 +61,9 @@ async def start(interact:discord.Interaction, link:str):
 async def online(ctx:commands.Context):
   user = 693587188650213432
   mention = f"<@{user}>"
-  await ctx.reply(f'{mention} Tô on Malucão!')
+  if ctx.author.bot:
+    await ctx.send(f'{mention} Tô on, Malucão!')
+  else:
+    await ctx.reply("Online!")
 
 bot.run(Token)
