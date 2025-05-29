@@ -50,8 +50,8 @@ async def start(interact:discord.Interaction, link:str):
   api_embed = discord.Embed()
   api_embed.title = f"    {functions.connect.conectar_api(link)} às {date.hour}:{date.minute}:{date.second}"
   api_embed.set_image(url="https://images-ext-1.discordapp.net/external/HQu3K9GCV6VqQz9FtJ8lYRxdh8stSq8RPWW1QmaVR0o/https/i.pinimg.com/736x/94/4b/c8/944bc8639a85065beebddd72f6a33b64.jpg?format=webp")
-  file=discord.File(r'result\result.txt')
-  filer=discord.File(r'recived\recived.txt')
+  file=discord.File(r'result/result.txt')
+  filer=discord.File(r'recived/recived.txt')
   await interact.response.send_message(embed=api_embed)
   s(1)
   await interact.followup.send(file=file, ephemeral=True)
