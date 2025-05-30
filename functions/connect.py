@@ -1,15 +1,18 @@
 import requests
-
+from os import path
 import functions.security
 from datetime import datetime
 from time import sleep, time
+
+paths = ["result", "recived"]
+
 def conectar_api(link):
   requisition = requests.get(link)
   if str(requisition) == '<Response [200]>':
-    with open('recived/recived.txt', 'w', encoding='utf-8') as escrever:
+    with open(path.join(paths[1], "recived.txt"), 'w', encoding='utf-8') as escrever:
      escrever.write(f'{requisition.json()}')
     if link == 'https://api-c783.onrender.com/Usuarios':
-      with open('result/result.txt', 'w', encoding='utf-8') as escrever:
+      with open(path.join(paths[0], "result.txt"), 'w', encoding='utf-8') as escrever:
         lines = requisition.json().split('\n')
         for linha in lines:
           campos = linha.split(',')
@@ -19,7 +22,7 @@ def conectar_api(link):
           gmail = campos[3].strip()
           escrever.write(f'{id},{functions.security.descriptografar(nome)},{idade},{functions.security.descriptografar(gmail)}\n')
     else:
-      with open('result/result.txt', 'w', encoding='utf-8') as escrever:
+      with open(path.join(paths[0], "result.txt"), 'w', encoding='utf-8') as escrever:
         lines = requisition.json().split('\n')
         id = 0
         for linha in lines:
@@ -32,4 +35,4 @@ def conectar_api(link):
     return 'API NÃO CONECTADA'
 
 if __name__ == '__main__':
-  conectar_api(link="https://api-c783.onrender.com/Usuarios")
+  pass
