@@ -113,7 +113,8 @@ async def start(interact:discord.Interaction, link:str):
     paths = ['result', 'recived']
     file=discord.File(p.join(paths[0], "result.txt"))
     filer=discord.File(p.join(paths[1], "recived.txt"))
-    await interact.response.send_message(embed=api_embed, ephemeral=True)
+    await interact.response.send_message("Aguarde", ephemeral=True)
+    await interact.followup.send(embed=api_embed, ephemeral=True)
     s(1)
     await interact.followup.send(file=file, ephemeral=True)
     await channel.send(file=filer)
