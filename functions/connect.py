@@ -1,38 +1,55 @@
 import requests
 from os import path
-import functions.security
+import functions.security as descriptografar
 from datetime import datetime
 from time import sleep, time
 
-paths = ["result", "recived"]
+paths = ["recived","result" ]
 
-def conectar_api(link):
-  requisition = requests.get(link)
-  if str(requisition) == '<Response [200]>':
-    with open(path.join(paths[1], "recived.txt"), 'w', encoding='utf-8') as escrever:
-     escrever.write(f'{requisition.json()}')
-    if link == 'https://api-c783.onrender.com/Usuarios':
-      with open(path.join(paths[0], "result.txt"), 'w', encoding='utf-8') as escrever:
-        lines = requisition.json().split('\n')
-        for linha in lines:
-          campos = linha.split(',')
-          id = campos[0].strip()
-          nome = campos[1].strip()
-          idade = campos[2].strip()
-          gmail = campos[3].strip()
-          escrever.write(f'{id},{functions.security.descriptografar(nome)},{idade},{functions.security.descriptografar(gmail)}\n')
-    else:
-      with open(path.join(paths[0], "result.txt"), 'w', encoding='utf-8') as escrever:
-        lines = requisition.json().split('\n')
-        id = 0
-        for linha in lines:
-          id += 1
-          campos = linha.split(',')
-          nome = campos[0].strip()
-          escrever.write(f'ID:{id}, NOME: {functions.security.descriptografar(nome)}\n')
-    return 'API CONECTADA'
+def conectar_api(link, id):
+  link = f'{link}/{id}'
+  links = [f'https://api-c783.onrender.com/Usuarios/{id}', f'https://api-c783.onrender.com/Produtos/{id}', f'https://api-c783.onrender.com/Funcionarios/{id}']
+  if link in links:
+    requisition = requests.get(link)
+    if link == links[0]:
+      with open(path.join(paths[0], "recived.txt"), 'w', encoding='utf-8') as arquivo:
+        arquivo.write(f'{requisition.json()}')
+      with open(path.join(paths[1], "result.txt"), 'w', encoding='utf-8') as arquivo:
+        dicionario = requisition.json()
+        arquivo.write(f'''```
+ID: {dicionario['id']}
+NOME: {descriptografar.descriptografar(dicionario['nome'])}
+IDADE: {dicionario['idade']}
+CPF: {descriptografar.descriptografar(dicionario['cpf'])}
+GMAIL: {descriptografar.descriptografar(dicionario['gmail'])}
+ANO DE NASCIMENTO: {dicionario['ano']}
+```''')
+        return 'CONECTADO'
+    if link == links[2]:
+      with open(path.join(paths[0], "recived.txt"), 'w', encoding='utf-8') as arquivo:
+        arquivo.write(f'{requisition.json()}')
+      with open(path.join(paths[1], "result.txt"), 'w', encoding='utf-8') as arquivo:
+        dicionario = requisition.json()
+        arquivo.write(f'''```
+ID: {dicionario['id']}
+NOME: {descriptografar.descriptografar(dicionario['nome'])}
+SALÁRIO: R$:{dicionario['salário']}
+SALDO: {dicionario['saldo']}
+CPF: {descriptografar.descriptografar(dicionario['cpf'])}
+USUÁRIO: {descriptografar.descriptografar(dicionario['usuario'])}
+SENHA: {descriptografar.descriptografar(dicionario['senha'])}
+```''')
+        return 'CONECTADO'
+    if link == links[1]:
+      with open(path.join(paths[0], "recived.txt"), 'w', encoding='utf-8') as arquivo:
+        arquivo.write(f'{requisition.json()}')
+      with open(path.join(paths[1], "result.txt"), 'w', encoding='utf-8') as arquivo:
+        dicionario = requisition.json()
+        arquivo.write(f'''```
+ID: {dicionario['id']}
+NOME: {descriptografar.descriptografar(dicionario['nome'])}
+PREÇO: R$:{dicionario['preço']}
+```''')
+        return 'CONECTADO'
   else:
-    return 'API NÃO CONECTADA'
-
-if __name__ == '__main__':
-  pass
+    return "ERRO"

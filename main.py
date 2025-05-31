@@ -100,7 +100,8 @@ async def desc(interact:discord.Interaction, message: str):
 
 @bot.tree.command(name="start",description="Faz uma Request na API")
 @app_commands.describe(link="API Link")
-async def start(interact:discord.Interaction, link:str):
+async def start(interact:discord.Interaction, link:str, id:int):
+  await interact.response.send_message(f'{interact.user.mention}, Aguarde...', ephemeral=True, delete_after=5)
   channel = bot.get_channel(1377368228535472190)
   mention = bot.get_channel(1262107519686283305)
   roles = interact.user.roles
@@ -108,15 +109,14 @@ async def start(interact:discord.Interaction, link:str):
   if role in roles and interact.channel_id == 1262107519686283305 or interact.user.id == 693587188650213432:
     date = datetime.now()
     api_embed = discord.Embed()
-    api_embed.title = f"    {functions.connect.conectar_api(link)} às {date.hour}:{date.minute}:{date.second}"
+    api_embed.title = f"{functions.connect.conectar_api(link, id)} às {date.hour}:{date.minute}:{date.second}"
     api_embed.set_image(url="https://images-ext-1.discordapp.net/external/HQu3K9GCV6VqQz9FtJ8lYRxdh8stSq8RPWW1QmaVR0o/https/i.pinimg.com/736x/94/4b/c8/944bc8639a85065beebddd72f6a33b64.jpg?format=webp")
     paths = ['result', 'recived']
-    file=discord.File(p.join(paths[0], "result.txt"))
     filer=discord.File(p.join(paths[1], "recived.txt"))
-    await interact.response.send_message("Aguarde", ephemeral=True)
     await interact.followup.send(embed=api_embed, ephemeral=True)
     s(1)
-    await interact.followup.send(file=file, ephemeral=True)
+    with open(p.join(paths[0], "result.txt"), 'rt', encoding='utf-8') as arquivo:
+      await interact.followup.send(arquivo.read(), ephemeral=True)
     await channel.send(file=filer)
     ch = bot.get_channel(1377783988353241218)
     ch2 = bot.get_channel(1377368228535472190)
@@ -129,7 +129,7 @@ async def start(interact:discord.Interaction, link:str):
      await interact.response.send_message("ERRO!", ephemeral=True)
 @start.autocomplete('link')
 async def complete(interact:discord.Interaction, recived:str):
-  links = ['https://api-c783.onrender.com/Usuarios', 'https://api-c783.onrender.com/Nomes']
+  links = ['https://api-c783.onrender.com/Usuarios', 'https://api-c783.onrender.com/Produtos', 'https://api-c783.onrender.com/Funcionarios']
   options = []
   for link in links:
     option = app_commands.Choice(name=link, value=link)
@@ -141,7 +141,6 @@ async def online(ctx:commands.Context):
   user = 693587188650213432
   mention = f"<@{user}>"
   await ctx.reply(f'{mention} Tô on Malucão!')
-
 
 
 bot.run(Token)
