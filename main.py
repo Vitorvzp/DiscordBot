@@ -14,7 +14,7 @@ load()
 
 Token = get("TOKEN")
 Api = get("API_GEMINI")
-client = genai.Client(Api)
+client = genai.Client(api_key=Api)
 intents = discord.Intents.all()
 intents.message_content = True
 intents.guild_messages = True
