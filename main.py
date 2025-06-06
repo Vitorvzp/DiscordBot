@@ -13,8 +13,8 @@ from google import genai
 load()
 
 Token = get("TOKEN")
-API_GEMINI = get("API_GEMINI")
-client = genai.Client(API_GEMINI)
+Api = get("API_GEMINI")
+client = genai.Client(Api)
 intents = discord.Intents.all()
 intents.message_content = True
 intents.guild_messages = True
