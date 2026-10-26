@@ -42,7 +42,7 @@ Os testes usam chave efêmera, dicionários inventados, SQLite temporário e HTT
 
 ## Estado de segurança
 
-Chave, dicionários cifrados, SQLite, respostas e caches foram retirados do índice Git e estão ignorados. Isso não apaga o histórico nem invalida material já exposto. Rotação de chaves, avaliação de dados expostos, migração e eventual limpeza de histórico exigem uma etapa específica; não foram executadas por esta alteração.
+No preparo local, chave, dicionários cifrados, SQLite, respostas e caches foram retirados apenas do índice Git, com as cópias em disco preservadas. Esta branch remota contém somente código, documentação e testes: os arquivos legados continuam rastreados nela e no histórico. O .gitignore cobre esses padrões, mas não remove entradas já rastreadas. Isso não apaga o histórico nem invalida material já exposto. Rotação de chaves, avaliação de dados expostos, migração e eventual limpeza de histórico exigem uma etapa específica; não foram executadas por esta alteração.
 
 Os comandos ainda podem solicitar dados sensíveis à API e enviá-los a canais Discord; a configuração dos canais, as permissões e o tratamento desses dados precisam de revisão separada antes de uso real. Esta alteração trata o armazenamento local e não altera servidores, chaves, permissões, configurações de acesso ou produção.
 
