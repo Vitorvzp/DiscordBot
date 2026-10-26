@@ -1,6 +1,7 @@
 from dotenv import load_dotenv as load
+load()
+
 from os import getenv as get
-from os import path as p
 import discord
 from discord import app_commands
 from discord.ext import commands, tasks
@@ -11,8 +12,7 @@ from time import sleep as s
 from google import genai
 from database import engine, IA
 from sqlmodel import Session, select
-
-load()
+from runtime_paths import data_file
 
 Token = get("TOKEN")
 Api = get("API_GEMINI")
@@ -147,11 +147,10 @@ async def start(interact:discord.Interaction, link:str, id:int):
     api_embed = discord.Embed()
     api_embed.title = f"{functions.connect.conectar_api(link, id)} às {date.hour}:{date.minute}:{date.second}"
     api_embed.set_image(url="https://images-ext-1.discordapp.net/external/HQu3K9GCV6VqQz9FtJ8lYRxdh8stSq8RPWW1QmaVR0o/https/i.pinimg.com/736x/94/4b/c8/944bc8639a85065beebddd72f6a33b64.jpg?format=webp")
-    paths = ['result', 'recived']
-    filer=discord.File(p.join(paths[1], "recived.txt"))
+    filer=discord.File(str(data_file("recived", "recived.txt")))
     await interact.followup.send(embed=api_embed, ephemeral=True)
     s(1)
-    with open(p.join(paths[0], "result.txt"), 'rt', encoding='utf-8') as arquivo:
+    with data_file("result", "result.txt").open('rt', encoding='utf-8') as arquivo:
       await interact.followup.send(arquivo.read(), ephemeral=True)
     await channel.send(file=filer)
     ch = bot.get_channel(1377783988353241218)

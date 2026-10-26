@@ -1,3 +1,21 @@
 *.venv
 *.env
 *__pycache__
+
+# Private runtime material must remain outside the checkout.
+.venv/
+venv/
+.env
+__pycache__/
+*.py[cod]
+*.key
+*.enc
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.log
+/recived/
+/result/
