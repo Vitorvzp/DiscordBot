@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, Field, create_engine
 from time import sleep as s
-from os import path as p
+from runtime_paths import data_file
 
 class IA(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
@@ -11,7 +11,7 @@ class IA(SQLModel, table=True):
     data: str
 
 
-connection_string = f"sqlite:///database.db"
+connection_string = f"sqlite:///{data_file('database.db').as_posix()}"
 
 engine = create_engine(connection_string)
 

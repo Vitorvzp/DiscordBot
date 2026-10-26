@@ -1,10 +1,8 @@
 import requests
-from os import path
 import functions.security as descriptografar
 from datetime import datetime
 from time import sleep, time
-
-paths = ["recived","result" ]
+from runtime_paths import data_file
 
 def conectar_api(link, id):
   link = f'{link}/{id}'
@@ -12,9 +10,9 @@ def conectar_api(link, id):
   if link in links:
     requisition = requests.get(link)
     if link == links[0]:
-      with open(path.join(paths[0], "recived.txt"), 'w', encoding='utf-8') as arquivo:
+      with data_file("recived", "recived.txt").open('w', encoding='utf-8') as arquivo:
         arquivo.write(f'{requisition.json()}')
-      with open(path.join(paths[1], "result.txt"), 'w', encoding='utf-8') as arquivo:
+      with data_file("result", "result.txt").open('w', encoding='utf-8') as arquivo:
         dicionario = requisition.json()
         arquivo.write(f'''```
 ID: {dicionario['id']}
@@ -26,9 +24,9 @@ ANO DE NASCIMENTO: {dicionario['ano']}
 ```''')
         return 'CONECTADO'
     if link == links[2]:
-      with open(path.join(paths[0], "recived.txt"), 'w', encoding='utf-8') as arquivo:
+      with data_file("recived", "recived.txt").open('w', encoding='utf-8') as arquivo:
         arquivo.write(f'{requisition.json()}')
-      with open(path.join(paths[1], "result.txt"), 'w', encoding='utf-8') as arquivo:
+      with data_file("result", "result.txt").open('w', encoding='utf-8') as arquivo:
         dicionario = requisition.json()
         arquivo.write(f'''```
 ID: {dicionario['id']}
@@ -41,9 +39,9 @@ SENHA: {descriptografar.descriptografar(dicionario['senha'])}
 ```''')
         return 'CONECTADO'
     if link == links[1]:
-      with open(path.join(paths[0], "recived.txt"), 'w', encoding='utf-8') as arquivo:
+      with data_file("recived", "recived.txt").open('w', encoding='utf-8') as arquivo:
         arquivo.write(f'{requisition.json()}')
-      with open(path.join(paths[1], "result.txt"), 'w', encoding='utf-8') as arquivo:
+      with data_file("result", "result.txt").open('w', encoding='utf-8') as arquivo:
         dicionario = requisition.json()
         arquivo.write(f'''```
 ID: {dicionario['id']}

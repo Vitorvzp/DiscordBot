@@ -1,30 +1,44 @@
+"""Legacy substitution dictionaries; private material is loaded only on use."""
+
+from functools import lru_cache
 import json
-from cryptography.fernet import Fernet
-import os
 
-CAMINHO_CHAVE = os.path.join("functions", "key.key")
-CAMINHO_CRIPTO = os.path.join("functions", "cripto.enc")
-CAMINHO_DESCRIPTO = os.path.join("functions", "descripto.enc")
+from cryptography.fernet import Fernet, InvalidToken
 
-def carregar_dicionario(caminho_arquivo: str, chave: bytes) -> dict:
-    fernet = Fernet(chave)
-    with open(caminho_arquivo, "rb") as f:
-        dados_encriptados = f.read()
-    dados_json = fernet.decrypt(dados_encriptados)
-    return json.loads(dados_json.decode())
+from runtime_paths import ENV_PREFIX, private_file
 
-# Carregar a chave
-with open(CAMINHO_CHAVE, "rb") as f:
-    chave = f.read()
 
-# Carregar dicionários criptografado e descriptografado
-DIC_CRIPTO = carregar_dicionario(CAMINHO_CRIPTO, chave)
-DIC_DESCRIPTO = carregar_dicionario(CAMINHO_DESCRIPTO, chave)
+def carregar_dicionario(caminho_arquivo, chave: bytes) -> dict:
+    dados_json = Fernet(chave).decrypt(caminho_arquivo.read_bytes())
+    dicionario = json.loads(dados_json.decode("utf-8"))
+    if not isinstance(dicionario, dict) or not all(
+        isinstance(k, str) and isinstance(v, str) for k, v in dicionario.items()
+    ):
+        raise ValueError("Invalid dictionary format.")
+    return dicionario
 
-# Função de criptografia
+
+@lru_cache(maxsize=1)
+def _dicionarios():
+    # Validate every path before opening any private material.
+    chave_path = private_file(f"{ENV_PREFIX}_KEY_FILE")
+    cripto_path = private_file(f"{ENV_PREFIX}_CRIPTO_FILE")
+    descripto_path = private_file(f"{ENV_PREFIX}_DESCRIPTO_FILE")
+    try:
+        chave = chave_path.read_bytes()
+        return (
+            carregar_dicionario(cripto_path, chave),
+            carregar_dicionario(descripto_path, chave),
+        )
+    except (OSError, ValueError, InvalidToken):
+        raise RuntimeError("Unable to load configured private dictionaries.") from None
+
+
 def criptografar(mensagem: str) -> str:
-    return ''.join(DIC_CRIPTO.get(letra, letra) for letra in mensagem)
+    dicionario, _ = _dicionarios()
+    return ''.join(dicionario.get(letra, letra) for letra in mensagem)
 
-# Função de descriptografia
+
 def descriptografar(mensagem: str) -> str:
-    return ''.join(DIC_DESCRIPTO.get(letra, letra) for letra in mensagem)
+    _, dicionario = _dicionarios()
+    return ''.join(dicionario.get(letra, letra) for letra in mensagem)
